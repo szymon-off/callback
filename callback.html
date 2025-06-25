@@ -1,34 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Authorization Code Callback</title>
+  <style>
+    body {
+      background: #f2f2f2;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      margin-bottom: 1em;
+    }
+
+    #codeField {
+      width: 100%;
+      padding: 0.8em;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 1em;
+      box-sizing: border-box;
+    }
+
+    #copyBtn {
+      background-color: #1db954;
+      color: white;
+      border: none;
+      padding: 0.8em 1.2em;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    #copyBtn:hover {
+      background-color: #17a64a;
+    }
+
+    #error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; padding: 2em;">
-  <h1>Authorization Code</h1>
-  <p id="msg">Loading…</p>
-  <button id="copyBtn" style="display:none;">Copy code</button>
+<body>
+  <div class="container">
+    <h1>Your Authorization Code</h1>
+    <p id="error" style="display:none;"></p>
+    <input type="text" id="codeField" readonly value="Loading code...">
+    <br>
+    <button id="copyBtn" style="display:none;">Copy Code</button>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const error = params.get('error');
 
-    const msgEl = document.getElementById('msg');
-    const btn = document.getElementById('copyBtn');
+    const codeField = document.getElementById('codeField');
+    const copyBtn = document.getElementById('copyBtn');
+    const errorMsg = document.getElementById('error');
 
     if (code) {
-      msgEl.textContent = `Authorization code: ${code}`;
-      btn.style.display = 'inline';
-      btn.onclick = () => {
+      codeField.value = code;
+      copyBtn.style.display = 'inline-block';
+      copyBtn.onclick = () => {
         navigator.clipboard.writeText(code)
-          .then(() => btn.textContent = 'Copied!')
-          .catch(()=> btn.textContent = 'Unable to copy');
+          .then(() => copyBtn.textContent = 'Copied!')
+          .catch(() => copyBtn.textContent = 'Failed to copy');
       };
     } else {
-      msgEl.textContent = error
+      codeField.style.display = 'none';
+      errorMsg.style.display = 'block';
+      errorMsg.textContent = error
         ? `Error: ${error}`
-        : 'Code not found in URL…';
+        : 'No code found in the URL...';
     }
   </script>
 </body>
