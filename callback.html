@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Authorization Code Callback</title>
+</head>
+<body style="font-family: sans-serif; padding: 2em;">
+  <h1>Authorization Code</h1>
+  <p id="msg">Loading…</p>
+  <button id="copyBtn" style="display:none;">Copy code</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const error = params.get('error');
+
+    const msgEl = document.getElementById('msg');
+    const btn = document.getElementById('copyBtn');
+
+    if (code) {
+      msgEl.textContent = `Authorization code: ${code}`;
+      btn.style.display = 'inline';
+      btn.onclick = () => {
+        navigator.clipboard.writeText(code)
+          .then(() => btn.textContent = 'Copied!')
+          .catch(()=> btn.textContent = 'Unable to copy');
+      };
+    } else {
+      msgEl.textContent = error
+        ? `Error: ${error}`
+        : 'Code not found in URL…';
+    }
+  </script>
+</body>
+</html>
