@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Callback Retriever</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background 0.3s;
+    }
+
+    #container {
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 90%;
+      max-width: 500px;
+      transition: background 0.3s, border-radius 0.3s;
+    }
+
+    #callbackBox {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    textarea {
+      width: 100%;
+      resize: none;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      transition: background 0.3s;
+    }
+
+    button.copy {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+
+    #errorMsg {
+      margin-top: 10px;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div id="callbackBox">
+      <textarea id="callback" rows="4" readonly></textarea>
+      <button class="copy" title="Copy" onclick="copyToClipboard()">📋</button>
+    </div>
+    <div id="errorMsg"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const callback = params.get("callback");
+    const error = params.get("error");
+
+    const bgColor      = params.get("bgColor")      || "#ffffff";
+    const boxColor     = params.get("boxColor")     || "#f9f9f9";
+    const inputColor   = params.get("inputColor")   || "#ffffff";
+    const copyColor    = params.get("copyColor")    || "#333333";
+    const borderRadius = params.get("borderRadius") || "12px";
+    const errorColor   = params.get("errorColor")   || "red";
+
+    document.body.style.background = bgColor;
+    const container = document.getElementById("container");
+    const callbackBox = document.getElementById("callbackBox");
+    const textarea = document.getElementById("callback");
+    const errorMsg = document.getElementById("errorMsg");
+    const copyBtn = document.querySelector("button.copy");
+
+    container.style.background = boxColor;
+    container.style.borderRadius = borderRadius;
+    textarea.style.background = inputColor;
+    copyBtn.style.color = copyColor;
+
+    if (error) {
+      textarea.value = "";
+      textarea.disabled = true;
+      textarea.style.background = "#ddd";
+      errorMsg.innerText = "Error: " + error;
+      errorMsg.style.color = errorColor;
+      errorMsg.style.display = "block";
+    } else if (callback) {
+      textarea.value = callback;
+    } else {
+      textarea.value = "";
+      textarea.placeholder = "No callback code provided.";
+    }
+
+    function copyToClipboard() {
+      if (textarea.disabled) return;
+      textarea.select();
+      document.execCommand("copy");
+      copyBtn.innerText = "✅";
+      setTimeout(() => copyBtn.innerText = "📋", 1500);
+    }
+  </script>
+</body>
+</html>
