@@ -1,74 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Callback Retriever</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      transition: background 0.3s;
-    }
+    <meta charset="UTF-8">
+    <title>Callback Code Helper</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background 0.3s;
+        }
 
-    #container {
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      width: 90%;
-      max-width: 500px;
-      transition: background 0.3s, border-radius 0.3s;
-    }
+        #container {
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            width: 90%;
+            max-width: 500px;
+            transition: background 0.3s, border-radius 0.3s;
+        }
 
-    #callbackBox {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
+        h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
 
-    textarea {
-      width: 100%;
-      resize: none;
-      padding: 10px;
-      font-size: 1em;
-      border: 1px solid #ccc;
-      transition: background 0.3s;
-    }
+        #callbackBox {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-    button.copy {
-      position: absolute;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 1.2em;
-      cursor: pointer;
-    }
+        textarea {
+            width: 100%;
+            resize: none;
+            padding: 10px 40px 10px 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: background 0.3s, border-color 0.3s;
+            font-family: monospace;
+        }
 
-    #errorMsg {
-      margin-top: 10px;
-      font-weight: bold;
-      display: none;
-    }
-  </style>
+        textarea.error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
+        button.copy {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        button.copy svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        button.copy:hover {
+            color: #007bff;
+        }
+
+        button.copy:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 <body>
-  <div id="container">
+<div id="container">
+    <h2 id="boxLabel">Authorization Code</h2>
     <div id="callbackBox">
-      <textarea id="callback" rows="4" readonly></textarea>
-      <button class="copy" title="Copy" onclick="copyToClipboard()">📋</button>
+        <textarea id="callback" rows="4" readonly></textarea>
+        <button class="copy" title="Copy" onclick="copyToClipboard()">
+            <svg viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z"/>
+            </svg>
+        </button>
     </div>
-    <div id="errorMsg"></div>
-  </div>
+</div>
 
-  <script>
+<script>
     const params = new URLSearchParams(window.location.search);
 
-    const callback = params.get("callback");
+    const label = params.get("label") || "Authorization Code";
+    document.getElementById("boxLabel").innerText = label;
+
+    const callback =
+        params.get("callback") ||
+        params.get("code") ||
+        params.get("token") ||
+        params.get("access_token") ||
+        params.get("auth_code");
+
     const error = params.get("error");
 
     const bgColor      = params.get("bgColor")      || "#ffffff";
@@ -76,13 +115,12 @@
     const inputColor   = params.get("inputColor")   || "#ffffff";
     const copyColor    = params.get("copyColor")    || "#333333";
     const borderRadius = params.get("borderRadius") || "12px";
-    const errorColor   = params.get("errorColor")   || "red";
+    const errorColor   = params.get("errorColor")   || "#a94442";
 
     document.body.style.background = bgColor;
+
     const container = document.getElementById("container");
-    const callbackBox = document.getElementById("callbackBox");
     const textarea = document.getElementById("callback");
-    const errorMsg = document.getElementById("errorMsg");
     const copyBtn = document.querySelector("button.copy");
 
     container.style.background = boxColor;
@@ -91,26 +129,23 @@
     copyBtn.style.color = copyColor;
 
     if (error) {
-      textarea.value = "";
-      textarea.disabled = true;
-      textarea.style.background = "#ddd";
-      errorMsg.innerText = "Error: " + error;
-      errorMsg.style.color = errorColor;
-      errorMsg.style.display = "block";
+        textarea.value = `Error: ${error}`;
+        textarea.classList.add("error");
     } else if (callback) {
-      textarea.value = callback;
+        textarea.value = callback;
     } else {
-      textarea.value = "";
-      textarea.placeholder = "No callback code provided.";
+        textarea.value = "No callback found in URL.";
+        textarea.classList.add("error");
     }
 
     function copyToClipboard() {
-      if (textarea.disabled) return;
-      textarea.select();
-      document.execCommand("copy");
-      copyBtn.innerText = "✅";
-      setTimeout(() => copyBtn.innerText = "📋", 1500);
+        if (textarea.disabled) return;
+        textarea.select();
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            copyBtn.style.color = "green";
+            setTimeout(() => copyBtn.style.color = copyColor, 1000);
+        });
     }
-  </script>
+</script>
 </body>
 </html>
