@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Callback Code Helper</title>
+    <title>Authorization Callback Code</title>
     <style>
         body {
             margin: 0;
@@ -29,6 +29,7 @@
             margin-top: 0;
             font-size: 1.2em;
             margin-bottom: 10px;
+            transition: color 0.3s;
         }
 
         #callbackBox {
@@ -44,8 +45,9 @@
             font-size: 1em;
             border: 1px solid #ccc;
             border-radius: 6px;
-            transition: background 0.3s, border-color 0.3s;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
             font-family: monospace;
+            color: inherit;
         }
 
         textarea.error {
@@ -88,9 +90,6 @@
     <div id="callbackBox">
         <textarea id="callback" rows="4" readonly></textarea>
         <button class="copy" title="Copy" onclick="copyToClipboard()">
-            <!--<svg viewBox="0 0 24 24">
-                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z"/>
-            </svg>-->
             <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 111.07 122.88" style="enable-background:new 0 0 111.07 122.88" xml:space="preserve">
                 <style type="text/css"><![CDATA[.st0{fill-rule:evenodd;clip-rule:evenodd;}]]></style>
                 <g>
@@ -123,6 +122,9 @@
     const borderRadius = params.get("borderRadius") || "12px";
     const errorColor   = params.get("errorColor")   || "#a94442";
 
+    const labelColor   = params.get("labelColor")   || "#000000";
+    const codeColor    = params.get("codeColor")    || "#000000";
+
     document.body.style.background = bgColor;
 
     const container = document.getElementById("container");
@@ -133,6 +135,9 @@
     container.style.borderRadius = borderRadius;
     textarea.style.background = inputColor;
     copyBtn.style.color = copyColor;
+
+    document.getElementById("boxLabel").style.color = labelColor;
+    textarea.style.color = codeColor;
 
     if (error) {
         textarea.value = `Error: ${error}`;
