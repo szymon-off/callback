@@ -141,13 +141,16 @@
 
     if (error) {
         textarea.value = `Error: ${error}`;
-        textarea.classList.add("error");
+        textarea.style.color = errorColor;
+        textarea.style.background = inputColor;
     } else if (callback) {
         textarea.value = callback;
+        textarea.style.color = codeColor;
     } else {
         textarea.value = "No callback found in URL.";
-        textarea.classList.add("error");
+        textarea.style.color = errorColor;
     }
+
 
     function copyToClipboard() {
         if (textarea.disabled) return;
