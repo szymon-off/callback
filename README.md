@@ -4,15 +4,13 @@
 Your best friend when it comes to simple OAuth2 authorization.
 
 
-
-
 ## How to use
 
 Use https://szymon-off.github.io/callback as your callback URL for any OAuth2 application. 
 
 OAuth2 applications will automatically add a code parameter which will be extracted and elegantly showcased to the user on the website.
 
-You have to ask the user for the code.
+Your application has to ask the user for the code.
 
 
 ## Demo
@@ -36,5 +34,6 @@ Additional URL parameters to customize the callback page. All of these are **opt
 | `inputColor`   | `color`  | Background color of the input/textarea.                    | `%23eeeeee`               |
 | `copyColor`    | `color`  | Color of the copy icon (SVG).                              | `%23007bff`               |
 | `errorColor`   | `color`  | Text color used for the error message (in textarea).       | `%23ff4d4f`               |
+| `labelColor`   | `color`  | Text color used for the label.                             | `%23000000`               |
+| `codeColor`    | `color`  | Text color used for the code.                              | `%23000000`               |
 | `borderRadius` | `string` | Border-radius CSS value for rounding the box.              | `12px`, `1rem`            |
-
